@@ -17,54 +17,82 @@ from kivy.graphics import Line
 from kivy.graphics import Color
 from kivy.graphics import Rectangle
 
+import draw
+
 #---------------------------------------------------------------------------------------------------
 # GUI.
 #---------------------------------------------------------------------------------------------------
 
 class GUI(Widget):
+    """
+    GUI.
+    """
+
+#---------------------------------------------------------------------------------------------------
+
+    def __init__(self, **kwargs):
+        """
+        Constructor.
+
+        Arguments:
+            kwargs -- Arguments.
+        """
+
+        super(GUI, self).__init__(**kwargs)
+
+        # Initialize drawer.
+        # We draw in (0, 100) * (0, 100) area in physical world.
+        # It is impossible to set painting area yet, because window is not created.
+        phys_area = draw.Area((0.0, 100.0), (0.0, 100.0))
+        self.Drawer = draw.Drawer(phys_area, self, None)
 
 #---------------------------------------------------------------------------------------------------
 
     def OnClickA(self):
-        '''
+        """
         Button A OnClick.
-        '''
+        """
+
+        self.Drawer.Clean()
 
         print("button A clicked")
 
 #---------------------------------------------------------------------------------------------------
 
     def OnClickB(self):
-        '''
+        """
         Button B OnClick.
-        '''
+        """
+
+        self.Drawer.SetColor((1.0, 0.0, 0.0, 1.0))
+        self.Drawer.Line((50.0, 0.0, 100.0, 50.0))
 
         print("button B clicked")
 
 #---------------------------------------------------------------------------------------------------
 
     def OnClickC(self):
-        '''
+        """
         Button C OnClick.
-        '''
+        """
 
         print("button C clicked")
 
 #---------------------------------------------------------------------------------------------------
 
     def OnClickD(self):
-        '''
+        """
         Button D OnClick.
-        '''
+        """
 
         print("button D clicked")
 
 #---------------------------------------------------------------------------------------------------
 
     def OnClickE(self):
-        '''
+        """
         Button E OnClick.
-        '''
+        """
 
         print("button E clicked")
 
@@ -73,13 +101,16 @@ class GUI(Widget):
 #---------------------------------------------------------------------------------------------------
 
 class MainApp(App):
+    """
+    Main application.
+    """
 
 #---------------------------------------------------------------------------------------------------
 
     def build(self):
-        '''
+        """
         Build.
-        '''
+        """
 
         return GUI()
 
@@ -87,7 +118,7 @@ class MainApp(App):
 # Run.
 #---------------------------------------------------------------------------------------------------
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     MainApp().run()
 
 #---------------------------------------------------------------------------------------------------
