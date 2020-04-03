@@ -39,18 +39,26 @@ class Node:
         # Color.
         if lab == 'I':
             self.Color = 'silver'
+            self.BorderColor = 'silver'
+            self.FontColor = 'black'
             self.Width = 6.0
             self.Height = 6.0
         elif lab == 'O':
             self.Color = 'silver'
+            self.BorderColor = 'silver'
+            self.FontColor = 'black'
             self.Width = 6.0
             self.Height = 6.0
         elif t == 'A':
-            self.Color = 'indianred'
+            self.Color = 'black'
+            self.BorderColor = 'black'
+            self.FontColor = 'white'
             self.Width = 5.0
             self.Height = 5.0
         elif t == 'P':
-            self.Color = 'steelblue'
+            self.Color = 'white'
+            self.BorderColor = 'black'
+            self.FontColor = 'black'
             self.Width = 4.0
             self.Height = 4.0
 

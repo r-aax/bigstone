@@ -368,7 +368,7 @@ class Drawer:
         for n in net.Nodes:
             self.Rect(n.LoLoCorner(),
                       n.HiHiCorner(),
-                      pen = aggdraw.Pen(n.Color, 1.0),
+                      pen = aggdraw.Pen(n.BorderColor, 1.0),
                       brush = aggdraw.Brush(n.Color))
 
         # Draw edges.
@@ -390,7 +390,7 @@ class Drawer:
         for n in net.Nodes:
             (x, y) = self.To(n.Center)
             l = len(n.Label)
-            dr.text((x - l * 4.0, y - 6.0), n.Label, font = font, fill = (0, 0, 0))
+            dr.text((x - l * 4.0, y - 6.0), n.Label, font = font, fill = n.FontColor)
 
 #---------------------------------------------------------------------------------------------------
 # Other functions.
