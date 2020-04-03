@@ -37,12 +37,20 @@ class Node:
         self.Center = (50.0, 50.0)
 
         # Color.
-        if t == 'A':
-            self.Color = (255, 0, 0, 255)
+        if lab == 'I':
+            self.Color = 'silver'
+            self.Width = 6.0
+            self.Height = 6.0
+        elif lab == 'O':
+            self.Color = 'silver'
+            self.Width = 6.0
+            self.Height = 6.0
+        elif t == 'A':
+            self.Color = 'indianred'
             self.Width = 5.0
             self.Height = 5.0
         elif t == 'P':
-            self.Color = (0, 0, 255, 255)
+            self.Color = 'steelblue'
             self.Width = 4.0
             self.Height = 4.0
 
@@ -246,14 +254,14 @@ class Net:
          output_activities_list, y_list) = alpha_algorithm_results
 
         # Construct net.
-        self.AddNode(Node('P', 'Input'))
-        self.AddNode(Node('P', 'Output'))
+        self.AddNode(Node('P', 'I'))
+        self.AddNode(Node('P', 'O'))
         for a in activities_list:
             self.AddNode(Node('A', a))
         for ia in input_activities_list:
-            self.AddEdge('Input', ia)
+            self.AddEdge('I', ia)
         for oa in output_activities_list:
-            self.AddEdge(oa, 'Output')
+            self.AddEdge(oa, 'O')
         for (i, (sa, sb)) in enumerate(y_list):
             lab = 'p%d' % i
             self.AddNode(Node('P', lab))
@@ -269,8 +277,6 @@ class Net:
         Define nodes coordinates.
         """
 
-        self.Nodes[0].Center = (10.0, 50.0)
-        self.Nodes[1].Center = (90.0, 50.0)
         self.Nodes[2].Center = (20.0, 50.0)
         self.Nodes[3].Center = (50.0, 50.0)
         self.Nodes[4].Center = (65.0, 75.0)
@@ -282,6 +288,13 @@ class Net:
         self.Nodes[10].Center = (65.0, 50.0)
         self.Nodes[11].Center = (65.0, 25.0)
         self.Nodes[12].Center = (35.0, 50.0)
+
+        #for n in self.Nodes:
+        #    n.Center = (random.uniform(10.0, 90.0), random.uniform(10.0, 90.0))
+
+        # Start and end.
+        self.Nodes[0].Center = (10.0, 50.0)
+        self.Nodes[1].Center = (90.0, 50.0)
 
 #---------------------------------------------------------------------------------------------------
 
@@ -332,6 +345,25 @@ class Net:
                 ap1 = (cx, ap[1])
                 bp1 = (cx, bp[1])
                 e.Points = ap + ap1 + bp1 + bp
+            elif abs(ap[1] - bp[1]) > a.Height:
+                ap1 = (ap[0] + 0.25 * a.Width, ap[1])
+                bp1 = (bp[0] - 0.25 * b.Width, bp[1])
+                cyf = 0.25 * (3.0 * ap1[1] + bp1[1])
+                cyt = 0.25 * (ap1[1] + 3.0 * bp1[1])
+                cy = random.uniform(cyf, cyt)
+                ap2 = (ap1[0], cy)
+                bp2 = (bp1[0], cy)
+                e.Points = ap + ap1 + ap2 + bp2 + bp1 + bp
+            else:
+                # Over head.
+                ap1 = (ap[0] + 0.5 * a.Width, ap[1])
+                bp1 = (bp[0] - 0.5 * b.Width, bp[1])
+                yf = max(ap1[1] + a.Height, bp1[1] + b.Height)
+                yt = yf + a.Height
+                y = random.uniform(yf, yt)
+                ap2 = (ap1[0], y)
+                bp2 = (bp1[0], y)
+                e.Points = ap + ap1 + ap2 + bp2 + bp1 + bp
 
 #---------------------------------------------------------------------------------------------------
 # Test.

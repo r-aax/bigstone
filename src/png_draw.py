@@ -19,6 +19,7 @@ import petri_net
 #---------------------------------------------------------------------------------------------------
 
 BlackPen = aggdraw.Pen('black', 1.0)
+WhiteBrush = aggdraw.Brush('white')
 
 #---------------------------------------------------------------------------------------------------
 # Class drawer.
@@ -77,7 +78,7 @@ class Drawer:
         """
 
         # Flush
-        self.Canvas.flush()
+        #self.Canvas.flush()
         if filename != None:
             self.Img.save(filename)
         self.Img.show()
@@ -367,7 +368,7 @@ class Drawer:
         for n in net.Nodes:
             self.Rect(n.LoLoCorner(),
                       n.HiHiCorner(),
-                      pen = aggdraw.Pen('black', 1.0),
+                      pen = aggdraw.Pen(n.Color, 1.0),
                       brush = aggdraw.Brush(n.Color))
 
         # Draw edges.
@@ -379,7 +380,17 @@ class Drawer:
 
             if len(ps) > 1:
                 self.Point((ps[0], ps[1]), 2, pen = pen, brush = brush)
-                self.Point((ps[-2], ps[-1]), 2, pen = pen, brush = brush)
+                self.Point((ps[-2], ps[-1]), 2, pen = pen, brush = WhiteBrush)
+
+        self.Canvas.flush()
+
+        # Labels.
+        dr = ImageDraw.Draw(self.Img)
+        font = ImageFont.truetype('C:\Windows\Fonts\lucon.ttf', 14)
+        for n in net.Nodes:
+            (x, y) = self.To(n.Center)
+            l = len(n.Label)
+            dr.text((x - l * 4.0, y - 6.0), n.Label, font = font, fill = (0, 0, 0))
 
 #---------------------------------------------------------------------------------------------------
 # Other functions.
@@ -473,8 +484,8 @@ def test_drawer():
 #---------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
-    #test_pil()
+    test_pil()
     #test_aggdraw()
-    test_drawer()
+    #test_drawer()
 
 #---------------------------------------------------------------------------------------------------
