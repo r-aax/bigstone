@@ -31,6 +31,17 @@ class Node:
         self.Label = lab
         self.InEdges = []
         self.OutEdges = []
+        self.Center = (50.0, 50.0)
+
+        # Color.
+        if t == 'A':
+            self.ColorComponents = (1.0, 0.0, 0.0, 1.0)
+            self.Width = 5.0
+            self.Height = 5.0
+        elif t == 'P':
+            self.ColorComponents = (0.0, 0.0, 1.0, 1.0)
+            self.Width = 4.0
+            self.Height = 4.0
 
 #---------------------------------------------------------------------------------------------------
 
@@ -92,6 +103,7 @@ class Edge:
 
         self.Pred = pred
         self.Succ = succ
+        self.ColorComponents = (0.0, 0.0, 0.0, 1.0)
 
 #---------------------------------------------------------------------------------------------------
 
@@ -193,6 +205,36 @@ class Net:
         succ.InEdges.append(edge)
 
 #---------------------------------------------------------------------------------------------------
+
+    def ConstructFromAlphaAlgorithm(self, alpha_algorithm_results):
+        """
+        Construct net from results of alpha algorithm.
+
+        Arguments:
+            alpha_algorithm_results -- Results of alpha algorithm.
+        """
+
+        (activities_list, input_activities_list,
+         output_activities_list, y_list) = alpha_algorithm_results
+
+        # Construct net.
+        self.AddNode(Node('P', 'Input'))
+        self.AddNode(Node('P', 'Output'))
+        for a in activities_list:
+            self.AddNode(Node('A', a))
+        for ia in input_activities_list:
+            self.AddEdge('Input', ia)
+        for oa in output_activities_list:
+            self.AddEdge(oa, 'Output')
+        for (i, (sa, sb)) in enumerate(y_list):
+            lab = 'p%d' % i
+            self.AddNode(Node('P', lab))
+            for a in sa:
+                self.AddEdge(a, lab)
+            for b in sb:
+                self.AddEdge(lab, b)
+
+#---------------------------------------------------------------------------------------------------
 # Test.
 #---------------------------------------------------------------------------------------------------
 
@@ -209,21 +251,8 @@ if __name__ == '__main__':
               ({'e'}, {'f'}), ({'a', 'd'}, {'b'})]
 
     # Construct net.
-    net.AddNode(Node('P', 'Input'))
-    net.AddNode(Node('P', 'Output'))
-    for a in activities_list:
-        net.AddNode(Node('A', a))
-    for ia in input_activities_list:
-        net.AddEdge('Input', ia)
-    for oa in output_activities_list:
-        net.AddEdge(oa, 'Output')
-    for (i, (sa, sb)) in enumerate(y_list):
-        lab = 'p%d' % i
-        net.AddNode(Node('P', lab))
-        for a in sa:
-            net.AddEdge(a, lab)
-        for b in sb:
-            net.AddEdge(lab, b)
+    net.ConstructFromAlphaAlgorithm((activities_list, input_activities_list,
+                                     output_activities_list, y_list))
 
     assert (len(net.Nodes) == 13) and (len(net.Edges) == 14)
 

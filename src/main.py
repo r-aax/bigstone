@@ -5,6 +5,7 @@ Created on Tue Mar 31 00:05:36 2020
 @author: Rybakov
 """
 
+# Outer modules.
 import kivy
 from kivy.app import App
 from kivy.uix.label import Label
@@ -17,7 +18,9 @@ from kivy.graphics import Line
 from kivy.graphics import Color
 from kivy.graphics import Rectangle
 
+# Own modules.
 import draw
+import petri_net
 
 #---------------------------------------------------------------------------------------------------
 # GUI.
@@ -64,8 +67,37 @@ class GUI(Widget):
         Button B OnClick.
         """
 
-        self.Drawer.SetColor((1.0, 0.0, 0.0, 1.0))
-        self.Drawer.Line((50.0, 0.0, 100.0, 50.0))
+        # Create test net.
+        net = petri_net.Net()
+
+        # Fill net configuration.
+        activities_list = ['a', 'b', 'c', 'd', 'e', 'f']
+        input_activities_list = ['a']
+        output_activities_list = ['f']
+        y_list = [({'c'}, {'d'}), ({'a'}, {'e'}), ({'b'}, {'c', 'f'}),
+                  ({'e'}, {'f'}), ({'a', 'd'}, {'b'})]
+
+        # Construct net.
+        net.ConstructFromAlphaAlgorithm((activities_list, input_activities_list,
+                                         output_activities_list, y_list))
+
+        net.Print()
+        net.Nodes[0].Center = (10.0, 50.0)
+        net.Nodes[1].Center = (90.0, 50.0)
+        net.Nodes[2].Center = (20.0, 50.0)
+        net.Nodes[3].Center = (50.0, 50.50)
+        net.Nodes[4].Center = (65.0, 75.0)
+        net.Nodes[5].Center = (35.0, 75.0)
+        net.Nodes[6].Center = (50.0, 25.0)
+        net.Nodes[7].Center = (80.0, 50.0)
+        net.Nodes[8].Center = (50.0, 75.0)
+        net.Nodes[9].Center = (35.0, 25.0)
+        net.Nodes[10].Center = (65.0, 50.0)
+        net.Nodes[11].Center = (65.0, 25.0)
+        net.Nodes[12].Center = (35.0, 50.0)
+
+        # Draw.
+        self.Drawer.DrawPetriNet(net)
 
         print("button B clicked")
 

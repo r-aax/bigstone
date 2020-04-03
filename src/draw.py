@@ -5,7 +5,11 @@ Created on Tue Mar 31 11:05:56 2020
 @author: Rybakov
 """
 
+# Outer modules.
 import kivy
+
+# Own modules.
+import petri_net
 
 #---------------------------------------------------------------------------------------------------
 # Area.
@@ -122,7 +126,7 @@ class Drawer:
         self.PaintArea = paint_area
 
         # Colors.
-        self.BackgroundColor = (0.9, 0.9, 0.9, 1.0)
+        self.BackgroundColor = (1.0, 1.0, 1.0, 1.0)
 
 #---------------------------------------------------------------------------------------------------
 
@@ -240,5 +244,51 @@ class Drawer:
 
         with self.Canvas:
             kivy.graphics.Line(points = t1 + t2)
+
+#---------------------------------------------------------------------------------------------------
+
+    def Rectangle(self, c):
+        """
+        Draw rectangles.
+
+        Arguments:
+            c -- Coordinates of two rectangle corners.
+        """
+
+        (x1, y1, x2, y2) = c
+        p1 = (x1, y1)
+        p2 = (x2, y2)
+        t1 = self.To(p1)
+        t2 = self.To(p2)
+
+        with self.Canvas:
+            kivy.graphics.Rectangle(pos = t1,
+                                    size = (t2[0] - t1[0], t2[1] - t1[1]))
+
+#--------------------------------------------------------------------------------
+
+    def DrawPetriNet(self, net):
+        """
+        Draw Petri net.
+
+        Arguments:
+            net - Petri net.
+        """
+
+        # Draw nodes.
+        for n in net.Nodes:
+            self.SetColor(n.ColorComponents)
+            self.Rectangle((n.Center[0] - 0.5 * n.Width,
+                            n.Center[1] - 0.5 * n.Height,
+                            n.Center[0] + 0.5 * n.Width,
+                            n.Center[1] + 0.5 * n.Height))
+
+        # Draw edges.
+        for e in net.Edges:
+            a, b = e.Pred, e.Succ
+            a_point = (a.Center[0] + 0.5 * a.Width, a.Center[1])
+            b_point = (b.Center[0] - 0.5 * b.Width, b.Center[1])
+            self.SetColor(e.ColorComponents)
+            self.Line(a_point + b_point)
 
 #---------------------------------------------------------------------------------------------------
