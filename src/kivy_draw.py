@@ -243,7 +243,7 @@ class Drawer:
         t2 = self.To(p2)
 
         with self.Canvas:
-            kivy.graphics.Line(points = t1 + t2)
+            kivy.graphics.Line(points = t1 + t2, width = 1.2)
 
 #---------------------------------------------------------------------------------------------------
 
@@ -265,7 +265,29 @@ class Drawer:
             kivy.graphics.Rectangle(pos = t1,
                                     size = (t2[0] - t1[0], t2[1] - t1[1]))
 
-#--------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------
+
+    def GetEdgeEndCoordInInterval(lo, hi, edges, index):
+        """
+        Get edge end coordinate in interval.
+        Some interval is given.
+        Several edges come out from it (count is 'edges').
+        The given edge has index 'index'.
+        It is necessary to find out value of coordinate.
+
+        Arguments:
+            lo -- Lower value of interval,
+            hi -- Higher value of interval,
+            edges -- Total edges count,
+            index -- Index of edge comes out.
+        """
+
+        length = hi - lo
+        dlength = length / (edges + 1)
+
+        return lo + dlength * (index + 1)
+
+#---------------------------------------------------------------------------------------------------
 
     def DrawPetriNet(self, net):
         """
@@ -286,9 +308,20 @@ class Drawer:
         # Draw edges.
         for e in net.Edges:
             a, b = e.Pred, e.Succ
-            a_point = (a.Center[0] + 0.5 * a.Width, a.Center[1])
-            b_point = (b.Center[0] - 0.5 * b.Width, b.Center[1])
+            a_point = (a.Center[0] + 0.5 * a.Width,
+                       Drawer.GetEdgeEndCoordInInterval(a.Center[1] - 0.5 * a.Height,
+                                                        a.Center[1] + 0.5 * a.Height,
+                                                        len(a.OutEdges),
+                                                        a.OutEdges.index(e)))
+            b_point = (b.Center[0] - 0.5 * b.Width,
+                       Drawer.GetEdgeEndCoordInInterval(b.Center[1] - 0.5 * b.Height,
+                                                        b.Center[1] + 0.5 * b.Height,
+                                                        len(b.InEdges),
+                                                        b.InEdges.index(e)))
+            center_x = 0.5 * (a_point[0] + b_point[0])
             self.SetColor(e.ColorComponents)
-            self.Line(a_point + b_point)
+            self.Line(a_point + (center_x, a_point[1]))
+            self.Line(b_point + (center_x, b_point[1]))
+            self.Line((center_x, a_point[1]) + (center_x, b_point[1]))
 
 #---------------------------------------------------------------------------------------------------
