@@ -41,9 +41,9 @@ class Drawer:
         Constructor.
 
         Arguments:
-            draw_size -- drawing area size,
-            margins -- margins,
-            pic_size -- picture size.
+            draw_size -- Drawing area size,
+            margins -- Margins,
+            pic_size -- Picture size.
         """
 
         # Create image and drawer.
@@ -73,7 +73,7 @@ class Drawer:
         Flush, Save, Show.
 
         Arguments:
-            filename -- name of file.
+            filename -- Name of file.
         """
 
         # Flush
@@ -89,10 +89,10 @@ class Drawer:
         Transform coordinate.
 
         Arguments:
-            x -- coordinate,
-            f -- from interval,
-            t -- to interval,
-            inv_k -- invert coefficient.
+            x -- Coordinate,
+            f -- From interval,
+            t -- To interval,
+            inv_k -- Invert coefficient.
 
         Result:
             New coordinate.
@@ -117,7 +117,7 @@ class Drawer:
         Transform point TO.
 
         Arguments:
-            p -- point from drawing area.
+            p -- Point from drawing area.
 
         Result:
             Point from picture area.
@@ -135,7 +135,7 @@ class Drawer:
         Transfrom point FROM.
 
         Arguments:
-            p -- point from picture area.
+            p -- Point from picture area.
 
         Result:
             Point from drawing area.
@@ -153,12 +153,31 @@ class Drawer:
         Line.
 
         Arguments:
-            p1 -- from point,
-            p2 -- to point,
-            pen -- pen.
+            p1 -- From point,
+            p2 -- To point,
+            pen -- Pen.
         """
 
         self.Canvas.line(self.To(p1) + self.To(p2), pen)
+
+#---------------------------------------------------------------------------------------------------
+
+    def Lines(self, ps, pen = BlackPen):
+        """
+        Lines.
+
+        Arguments:
+            ps -- Points,
+            pen -- Pen.
+        """
+
+        ts = ()
+        i = 0
+        while i < len(ps):
+            ts = ts + self.To((ps[i], ps[i + 1]))
+            i = i + 2
+
+        self.Canvas.line(ts, pen)
 
 #---------------------------------------------------------------------------------------------------
 
@@ -167,8 +186,8 @@ class Drawer:
         Fix line.
 
         Arguments:
-            p -- from point,
-            dp -- fixed displacement.
+            p -- From point,
+            dp -- Fixed displacement.
         """
 
         (cx, cy) = self.To(p)
@@ -183,10 +202,10 @@ class Drawer:
         Ellipse.
 
         Arguments:
-            p1 -- first point,
-            p2 -- second point,
-            pen -- pen,
-            brush -- brush.
+            p1 -- First point,
+            p2 -- Second point,
+            pen -- Pen,
+            brush -- Brush.
         """
 
         c = self.To(p1) + self.To(p2)
@@ -202,10 +221,10 @@ class Drawer:
         Point.
 
         Arguments:
-            p -- center of point,
-            r -- radius,
-            pen -- pen,
-            brush -- brush.
+            p -- Center of point,
+            r -- Radius,
+            pen -- Pen,
+            brush -- Brush.
         """
 
         (cx, cy) = self.To(p)
@@ -224,9 +243,9 @@ class Drawer:
         Draw axis.
 
         Arguments:
-            h -- arrow height,
-            w -- arrow width,
-            pen -- pen.
+            h -- Arrow height,
+            w -- Arrow width,
+            pen -- Pen.
         """
 
         (min_x, min_y, max_x, max_y) = self.DrawArea
@@ -252,8 +271,8 @@ class Drawer:
         Draw grid.
 
         Arguments:
-            deltas -- distances between adjacent lines,
-            pen -- pen.
+            deltas -- Distances between adjacent lines,
+            pen -- Pen.
         """
 
         (min_x, min_y, max_x, max_y) = self.DrawArea
@@ -287,10 +306,10 @@ class Drawer:
         Rectangle.
 
         Arguments:
-            p1 -- first point,
-            p2 -- second point,
-            pen -- pen,
-            brish -- brush.
+            p1 -- First point,
+            p2 -- Second point,
+            pen -- Pen,
+            brish -- Brush.
         """
 
         if brush == None:
@@ -305,11 +324,11 @@ class Drawer:
         Rectangle with point in its center.
 
         Argements:
-            p1 -- first point,
-            p2 -- second point,
-            r -- point radius,
-            pen -- pen,
-            brush -- brush.
+            p1 -- First point,
+            p2 -- Second point,
+            r -- Point radius,
+            pen -- Pen,
+            brush -- Brush.
         """
 
         (p1x, p1y) = p1
@@ -325,14 +344,95 @@ class Drawer:
         Draw full graph.
 
         Arguments:
-            ps -- point list,
-            pen -- pen.
+            ps -- Point list,
+            pen -- Pen.
         """
 
         n = len(ps)
         for i in range(n):
             for j in range(i + 1, n):
                 self.Line(ps[i], ps[j], pen)
+
+#---------------------------------------------------------------------------------------------------
+
+    def GetEdgeEndCoordInInterval(lo, hi, edges, index):
+        """
+        Get edge end coordinate in interval.
+        Some interval is given.
+        Several edges come out from it (count is 'edges').
+        The given edge has index 'index'.
+        It is necessary to find out value of coordinate.
+
+        Arguments:
+            lo -- Lower value of interval,
+            hi -- Higher value of interval,
+            edges -- Total edges count,
+            index -- Index of edge comes out.
+        """
+
+        length = hi - lo
+        dlength = length / (edges + 1)
+
+        return lo + dlength * (index + 1)
+
+#---------------------------------------------------------------------------------------------------
+
+    def ConstructABPath(a, b, x_off):
+        """
+        Construct path from A to B point.
+
+        Arguments:
+            a -- Point A,
+            b -- Point B,
+            x_off - Offset by X coordinate.
+
+        Result:
+            Path.
+        """
+
+        a1 = (a[0] + x_off, a[1])
+        b1 = (b[0] - x_off, b[1])
+        center_y = 0.5 * (a[1] + b[1])
+        ca = (a1[0], center_y)
+        cb = (b1[0], center_y)
+
+        return a + a1 + ca + cb + b1 + b
+
+#---------------------------------------------------------------------------------------------------
+
+    def DrawPetriNet(self, net):
+        """
+        Draw Petri net.
+
+        Arguments:
+            net - Petri net.
+        """
+
+        # Draw nodes.
+        for n in net.Nodes:
+            self.Rect(n.LoLoCorner(),
+                      n.HiHiCorner(),
+                      pen = aggdraw.Pen('black', 1.0),
+                      brush = aggdraw.Brush(n.Color))
+
+        # Draw edges.
+        for e in net.Edges:
+            pen = aggdraw.Pen(e.Color, 1.0)
+            brush = aggdraw.Brush(e.Color)
+            a, b = e.Pred, e.Succ
+            a_point = (a.Center[0] + 0.5 * a.Width,
+                       Drawer.GetEdgeEndCoordInInterval(a.Center[1] - 0.5 * a.Height,
+                                                        a.Center[1] + 0.5 * a.Height,
+                                                        len(a.OutEdges),
+                                                        a.OutEdges.index(e)))
+            b_point = (b.Center[0] - 0.5 * b.Width,
+                       Drawer.GetEdgeEndCoordInInterval(b.Center[1] - 0.5 * b.Height,
+                                                        b.Center[1] + 0.5 * b.Height,
+                                                        len(b.InEdges),
+                                                        b.InEdges.index(e)))
+            self.Lines(Drawer.ConstructABPath(a_point, b_point, 4.0), pen = pen)
+            self.Point(a_point, 2, pen = pen, brush = brush)
+            self.Point(b_point, 2, pen = pen, brush = brush)
 
 #---------------------------------------------------------------------------------------------------
 # Other functions.
@@ -376,7 +476,7 @@ def test_aggdraw():
     """
 
     # Create image and drawer.
-    img = Image.new('RGB', (600, 300), color = (73, 109, 137))
+    img = Image.new('RGB', (2000, 1000), color = (73, 109, 137))
     c = aggdraw.Draw(img)
 
     c.setantialias(True)

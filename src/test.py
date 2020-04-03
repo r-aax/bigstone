@@ -36,7 +36,7 @@ if __name__ == '__main__':
     net.Nodes[0].Center = (10.0, 50.0)
     net.Nodes[1].Center = (90.0, 50.0)
     net.Nodes[2].Center = (20.0, 50.0)
-    net.Nodes[3].Center = (50.0, 50.50)
+    net.Nodes[3].Center = (50.0, 50.0)
     net.Nodes[4].Center = (65.0, 75.0)
     net.Nodes[5].Center = (35.0, 75.0)
     net.Nodes[6].Center = (50.0, 25.0)
@@ -49,12 +49,7 @@ if __name__ == '__main__':
 
     # Construct drawer.
     drawer = png_draw.Drawer()
-    drawer.Line((0, 0), (100, 100))
-    drawer.Ellipse((30, 30), (70, 70),
-                   pen = aggdraw.Pen('red', 1.5), brush = aggdraw.Brush('steelblue'))
-    drawer.Point((10, 80), 5)
-    drawer.Point((80, 10), 5)
-
-    # To show type D.FSS()
+    drawer.DrawPetriNet(net)
+    drawer.FSS()
 
 #---------------------------------------------------------------------------------------------------

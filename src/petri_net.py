@@ -35,11 +35,11 @@ class Node:
 
         # Color.
         if t == 'A':
-            self.ColorComponents = (1.0, 0.0, 0.0, 1.0)
+            self.Color = (255, 0, 0, 255)
             self.Width = 5.0
             self.Height = 5.0
         elif t == 'P':
-            self.ColorComponents = (0.0, 0.0, 1.0, 1.0)
+            self.Color = (0, 0, 255, 255)
             self.Width = 4.0
             self.Height = 4.0
 
@@ -82,6 +82,30 @@ class Node:
         return self.Type == 'P'
 
 #---------------------------------------------------------------------------------------------------
+
+    def LoLoCorner(self):
+        """
+        Get lo-lo corner.
+
+        Result:
+            Lo-lo corner.
+        """
+
+        return (self.Center[0] - 0.5 * self.Width, self.Center[1] - 0.5 * self.Height)
+
+#---------------------------------------------------------------------------------------------------
+
+    def HiHiCorner(self):
+        """
+        Get hi-hi corner.
+
+        Result:
+            Hi-hi corner.
+        """
+
+        return (self.Center[0] + 0.5 * self.Width, self.Center[1] + 0.5 * self.Height)
+
+#---------------------------------------------------------------------------------------------------
 # Class edge.
 #---------------------------------------------------------------------------------------------------
 
@@ -103,7 +127,7 @@ class Edge:
 
         self.Pred = pred
         self.Succ = succ
-        self.ColorComponents = (0.0, 0.0, 0.0, 1.0)
+        self.Color = (0, 0, 0, 255, 255)
 
 #---------------------------------------------------------------------------------------------------
 
