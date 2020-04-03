@@ -355,51 +355,6 @@ class Drawer:
 
 #---------------------------------------------------------------------------------------------------
 
-    def GetEdgeEndCoordInInterval(lo, hi, edges, index):
-        """
-        Get edge end coordinate in interval.
-        Some interval is given.
-        Several edges come out from it (count is 'edges').
-        The given edge has index 'index'.
-        It is necessary to find out value of coordinate.
-
-        Arguments:
-            lo -- Lower value of interval,
-            hi -- Higher value of interval,
-            edges -- Total edges count,
-            index -- Index of edge comes out.
-        """
-
-        length = hi - lo
-        dlength = length / (edges + 1)
-
-        return lo + dlength * (index + 1)
-
-#---------------------------------------------------------------------------------------------------
-
-    def ConstructABPath(a, b, x_off):
-        """
-        Construct path from A to B point.
-
-        Arguments:
-            a -- Point A,
-            b -- Point B,
-            x_off - Offset by X coordinate.
-
-        Result:
-            Path.
-        """
-
-        a1 = (a[0] + x_off, a[1])
-        b1 = (b[0] - x_off, b[1])
-        center_y = 0.5 * (a[1] + b[1])
-        ca = (a1[0], center_y)
-        cb = (b1[0], center_y)
-
-        return a + a1 + ca + cb + b1 + b
-
-#---------------------------------------------------------------------------------------------------
-
     def DrawPetriNet(self, net):
         """
         Draw Petri net.
@@ -419,20 +374,12 @@ class Drawer:
         for e in net.Edges:
             pen = aggdraw.Pen(e.Color, 1.0)
             brush = aggdraw.Brush(e.Color)
-            a, b = e.Pred, e.Succ
-            a_point = (a.Center[0] + 0.5 * a.Width,
-                       Drawer.GetEdgeEndCoordInInterval(a.Center[1] - 0.5 * a.Height,
-                                                        a.Center[1] + 0.5 * a.Height,
-                                                        len(a.OutEdges),
-                                                        a.OutEdges.index(e)))
-            b_point = (b.Center[0] - 0.5 * b.Width,
-                       Drawer.GetEdgeEndCoordInInterval(b.Center[1] - 0.5 * b.Height,
-                                                        b.Center[1] + 0.5 * b.Height,
-                                                        len(b.InEdges),
-                                                        b.InEdges.index(e)))
-            self.Lines(Drawer.ConstructABPath(a_point, b_point, 4.0), pen = pen)
-            self.Point(a_point, 2, pen = pen, brush = brush)
-            self.Point(b_point, 2, pen = pen, brush = brush)
+            ps = e.Points
+            self.Lines(ps, pen = pen)
+
+            if len(ps) > 1:
+                self.Point((ps[0], ps[1]), 2, pen = pen, brush = brush)
+                self.Point((ps[-2], ps[-1]), 2, pen = pen, brush = brush)
 
 #---------------------------------------------------------------------------------------------------
 # Other functions.

@@ -128,6 +128,7 @@ class Edge:
         self.Pred = pred
         self.Succ = succ
         self.Color = (0, 0, 0, 255, 255)
+        self.Points = ()
 
 #---------------------------------------------------------------------------------------------------
 
@@ -258,6 +259,69 @@ class Net:
             for b in sb:
                 self.AddEdge(lab, b)
 
+#---------------------------------------------------------------------------------------------------
+
+    def DefineNodesCoords(self):
+        """
+        Define nodes coordinates.
+        """
+
+        self.Nodes[0].Center = (10.0, 50.0)
+        self.Nodes[1].Center = (90.0, 50.0)
+        self.Nodes[2].Center = (20.0, 50.0)
+        self.Nodes[3].Center = (50.0, 50.0)
+        self.Nodes[4].Center = (65.0, 75.0)
+        self.Nodes[5].Center = (35.0, 75.0)
+        self.Nodes[6].Center = (50.0, 25.0)
+        self.Nodes[7].Center = (80.0, 50.0)
+        self.Nodes[8].Center = (50.0, 75.0)
+        self.Nodes[9].Center = (35.0, 25.0)
+        self.Nodes[10].Center = (65.0, 50.0)
+        self.Nodes[11].Center = (65.0, 25.0)
+        self.Nodes[12].Center = (35.0, 50.0)
+
+#---------------------------------------------------------------------------------------------------
+
+    def GetEdgeEndCoordInInterval(lo, hi, edges, index):
+        """
+        Get edge end coordinate in interval.
+        Some interval is given.
+        Several edges come out from it (count is 'edges').
+        The given edge has index 'index'.
+        It is necessary to find out value of coordinate.
+
+        Arguments:
+            lo -- Lower value of interval,
+            hi -- Higher value of interval,
+            edges -- Total edges count,
+            index -- Index of edge comes out.
+        """
+
+        length = hi - lo
+        dlength = length / (edges + 1)
+
+        return lo + dlength * (index + 1)
+
+#---------------------------------------------------------------------------------------------------
+
+    def DefineEdgesCoords(self):
+        """
+        Define edges coordintes.
+        """
+
+        for e in self.Edges:
+            a, b = e.Pred, e.Succ
+            ap = (a.Center[0] + 0.5 * a.Width,
+                  Net.GetEdgeEndCoordInInterval(a.Center[1] - 0.5 * a.Height,
+                                                a.Center[1] + 0.5 * a.Height,
+                                                len(a.OutEdges),
+                                                a.OutEdges.index(e)))
+            bp = (b.Center[0] - 0.5 * b.Width,
+                  Net.GetEdgeEndCoordInInterval(b.Center[1] - 0.5 * b.Height,
+                                                b.Center[1] + 0.5 * b.Height,
+                                                len(b.InEdges),
+                                                b.InEdges.index(e)))
+            e.Points = () #ap + bp
 #---------------------------------------------------------------------------------------------------
 # Test.
 #---------------------------------------------------------------------------------------------------
