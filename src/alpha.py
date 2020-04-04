@@ -92,7 +92,7 @@ def apply_alpha_algorithm(log):
     input_activities_set = set([t[0] for t in traces_list])
     output_activities_set = set([t[-1] for t in traces_list])
 
-    #print('Activities : ', activities_set, input_activities_set, output_activities_set)
+    print('Activities : ', activities_set, input_activities_set, output_activities_set)
 
     # Generate G-table.
     activities_list = sorted(list(activities_set))
@@ -104,7 +104,7 @@ def apply_alpha_algorithm(log):
         for i in range(len(trace) - 1):
             g_table[activities_list.index(trace[i])][activities_list.index(trace[i + 1])] = 1
 
-    #print('G-table : ', g_table)
+    print('G-table : ', g_table)
 
     # Generate R-table.
     #   0 - not initialized,
@@ -133,7 +133,7 @@ def apply_alpha_algorithm(log):
             else:
                 raise Exception('wrong values from G-table')
 
-    #print('R-table : ', r_table)
+    print('R-table : ', r_table)
 
     # Form X set.
     x_list = []
@@ -147,7 +147,7 @@ def apply_alpha_algorithm(log):
                         if is_subsets_relate(sa, sb, activities_list, r_table, 1):
                             x_list.append((sa, sb))
 
-    #print('X-list : ', x_list)
+    print('X-list : ', x_list)
 
     # Form Y set.
     y_list = []
@@ -160,7 +160,7 @@ def apply_alpha_algorithm(log):
         if is_max:
             y_list.append((sa, sb))
 
-    #print('Y-list : ', y_list)
+    print('Y-list : ', y_list)
 
     return (activities_list,
             list(input_activities_set),

@@ -19,6 +19,7 @@ import petri_net
 #---------------------------------------------------------------------------------------------------
 
 BlackPen = aggdraw.Pen('black', 1.0)
+BlackBrush = aggdraw.Brush('black')
 WhiteBrush = aggdraw.Brush('white')
 
 #---------------------------------------------------------------------------------------------------
@@ -179,6 +180,26 @@ class Drawer:
             i = i + 2
 
         self.Canvas.line(ts, pen)
+
+#---------------------------------------------------------------------------------------------------
+
+    def Polygon(self, ps, pen = BlackPen, brush = BlackBrush):
+        """
+        Lines.
+
+        Arguments:
+            ps -- Points,
+            pen -- Pen,
+            brush -- Brush.
+        """
+
+        ts = ()
+        i = 0
+        while i < len(ps):
+            ts = ts + self.To((ps[i], ps[i + 1]))
+            i = i + 2
+
+        self.Canvas.polygon(ts, pen, brush)
 
 #---------------------------------------------------------------------------------------------------
 
@@ -374,13 +395,15 @@ class Drawer:
         # Draw edges.
         for e in net.Edges:
             pen = aggdraw.Pen(e.Color, 1.0)
-            brush = aggdraw.Brush(e.Color)
             ps = e.Points
             self.Lines(ps, pen = pen)
 
             if len(ps) > 1:
-                self.Point((ps[0], ps[1]), 4, pen = pen, brush = brush)
-                self.Point((ps[-2], ps[-1]), 4, pen = pen, brush = WhiteBrush)
+                self.Point((ps[0], ps[1]), 4, pen = pen, brush = WhiteBrush)
+                x, y = ps[-2], ps[-1]
+                (tx, ty)= self.To((x, y))
+                self.Canvas.polygon((tx + 4, ty, tx - 4, ty + 5, tx - 4, ty - 5),
+                                     pen, WhiteBrush)
 
         self.Canvas.flush()
 

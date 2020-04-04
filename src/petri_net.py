@@ -352,8 +352,20 @@ class Net:
             self.DefineNodeCoords('e',  (68.0, 50.0))
             self.DefineNodeCoords('p4', (74.0, 55.0))
             self.DefineNodeCoords('f',  (80.0, 50.0))
+        elif self.Name == 'third':
+            self.DefineNodeCoords('a',  (20.0, 50.0))
+            self.DefineNodeCoords('p2', (40.0, 55.0))
+            self.DefineNodeCoords('b',  (30.0, 50.0))
+            self.DefineNodeCoords('p3', (40.0, 45.0))
+            self.DefineNodeCoords('c',  (50.0, 55.0))
+            self.DefineNodeCoords('p0', (60.0, 55.0))
+            self.DefineNodeCoords('d',  (50.0, 45.0))
+            self.DefineNodeCoords('p1', (60.0, 45.0))
+            self.DefineNodeCoords('e',  (70.0, 50.0))
+            self.DefineNodeCoords('p4', (50.0, 70.0))
+            self.DefineNodeCoords('f',  (80.0, 50.0))
         else:
-            raise Exception('unexpected neet name')
+            raise Exception('unexpected net name')
 
 #---------------------------------------------------------------------------------------------------
 
@@ -391,6 +403,40 @@ class Net:
         cxf = 0.25 * (3.0 * ap[0] + bp[0])
         cxt = 0.25 * (ap[0] + 3.0 * bp[0])
         cx = random.uniform(cxf, cxt)
+        ap1 = (cx, ap[1])
+        bp1 = (cx, bp[1])
+        e.Points = ap + ap1 + bp1 + bp
+
+#---------------------------------------------------------------------------------------------------
+
+    def SetEdgeCoordsTypeHorizontalNearA(e):
+        """
+        Define edge coordinates type 'horizontal' near A point.
+
+        Arguments:
+            e -- Edge.
+        """
+
+        a = e.Pred
+        ap, bp = e.APoint, e.BPoint
+        cx = ap[0] + 0.5 * a.Width
+        ap1 = (cx, ap[1])
+        bp1 = (cx, bp[1])
+        e.Points = ap + ap1 + bp1 + bp
+
+#---------------------------------------------------------------------------------------------------
+
+    def SetEdgeCoordsTypeHorizontalNearB(e):
+        """
+        Define edge coordinates type 'horizontal' near B point.
+
+        Arguments:
+            e -- Edge.
+        """
+
+        b = e.Succ
+        ap, bp = e.APoint, e.BPoint
+        cx = bp[0] - 0.5 * b.Width
         ap1 = (cx, ap[1])
         bp1 = (cx, bp[1])
         e.Points = ap + ap1 + bp1 + bp
@@ -499,6 +545,10 @@ class Net:
         elif self.Name == 'second':
             Net.SetEdgeCoordsTypeOverHead(self.FindEdge('a', 'p4'))
             Net.SetEdgeCoordsTypeOverBottom(self.FindEdge('p2', 'f'))
+        elif self.Name == 'third':
+            Net.SetEdgeCoordsTypeOverHead(self.FindEdge('c', 'O'))
+            Net.SetEdgeCoordsTypeHorizontalNearB(self.FindEdge('p4', 'f'))
+            Net.SetEdgeCoordsTypeHorizontalNearA(self.FindEdge('a', 'p4'))
         else:
             raise Exception('unexpected neet name')
 
