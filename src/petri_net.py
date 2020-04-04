@@ -41,14 +41,14 @@ class Node:
             self.Color = 'silver'
             self.BorderColor = 'silver'
             self.FontColor = 'black'
-            self.Width = 6.0
-            self.Height = 6.0
+            self.Width = 4.0
+            self.Height = 4.0
         elif lab == 'O':
             self.Color = 'silver'
             self.BorderColor = 'silver'
             self.FontColor = 'black'
-            self.Width = 6.0
-            self.Height = 6.0
+            self.Width = 4.0
+            self.Height = 4.0
         elif t == 'A':
             self.Color = 'black'
             self.BorderColor = 'black'
@@ -147,6 +147,8 @@ class Edge:
         self.Pred = pred
         self.Succ = succ
         self.Color = (0, 0, 0, 255, 255)
+        self.APoint = None
+        self.BPoint = None
         self.Points = ()
 
 #---------------------------------------------------------------------------------------------------
@@ -172,13 +174,17 @@ class Net:
 
 #---------------------------------------------------------------------------------------------------
 
-    def __init__(self):
+    def __init__(self, name):
         """
         Constructor.
+
+        Arguments:
+            name -- Name of net.
         """
 
         self.Nodes = []
         self.Edges = []
+        self.Name = name
 
 #---------------------------------------------------------------------------------------------------
 
@@ -187,7 +193,7 @@ class Net:
         Print information.
         """
 
-        print('Net : %d nodes, %d edges' % (len(self.Nodes), len(self.Edges)))
+        print('Net %s : %d nodes, %d edges' % (self.Name, len(self.Nodes), len(self.Edges)))
         for n in self.Nodes:
             print(str(n))
         for e in self.Edges:
@@ -209,6 +215,26 @@ class Net:
         for n in self.Nodes:
             if n.Label == lab:
                 return n
+
+        return None
+
+#---------------------------------------------------------------------------------------------------
+
+    def FindEdge(self, laba, labb):
+        """
+        Find edge by nodes labels.
+
+        Arguments:
+            laba -- Node A label,
+            labb -- Node B label.
+
+        Result:
+            Edge or None.
+        """
+
+        for e in self.Edges:
+            if (e.Pred.Label == laba) and (e.Succ.Label == labb):
+                return e
 
         return None
 
@@ -280,29 +306,54 @@ class Net:
 
 #---------------------------------------------------------------------------------------------------
 
+    def DefineNodeCoords(self, lab, coords):
+        """
+        Define coordinates of node.
+
+        Arguments:
+            lab -- Node label,
+            coords -- Coordinares.
+        """
+
+        self.FindNode(lab).Center = coords
+
+#---------------------------------------------------------------------------------------------------
+
     def DefineNodesCoords(self):
         """
         Define nodes coordinates.
         """
 
-        self.Nodes[2].Center = (20.0, 50.0)
-        self.Nodes[3].Center = (50.0, 50.0)
-        self.Nodes[4].Center = (65.0, 75.0)
-        self.Nodes[5].Center = (35.0, 75.0)
-        self.Nodes[6].Center = (50.0, 25.0)
-        self.Nodes[7].Center = (80.0, 50.0)
-        self.Nodes[8].Center = (50.0, 75.0)
-        self.Nodes[9].Center = (35.0, 25.0)
-        self.Nodes[10].Center = (65.0, 50.0)
-        self.Nodes[11].Center = (65.0, 25.0)
-        self.Nodes[12].Center = (35.0, 50.0)
-
-        #for n in self.Nodes:
-        #    n.Center = (random.uniform(10.0, 90.0), random.uniform(10.0, 90.0))
-
         # Start and end.
-        self.Nodes[0].Center = (10.0, 50.0)
-        self.Nodes[1].Center = (90.0, 50.0)
+        self.DefineNodeCoords('I', (10.0, 50.0))
+        self.DefineNodeCoords('O', (90.0, 50.0))
+
+        if self.Name == 'origin':
+            self.DefineNodeCoords('a',  (20.0, 50.0))
+            self.DefineNodeCoords('p2', (26.0, 50.0))
+            self.DefineNodeCoords('b',  (32.0, 50.0))
+            self.DefineNodeCoords('p3', (38.0, 50.0))
+            self.DefineNodeCoords('c',  (44.0, 50.0))
+            self.DefineNodeCoords('p0', (50.0, 50.0))
+            self.DefineNodeCoords('d',  (56.0, 50.0))
+            self.DefineNodeCoords('p1', (62.0, 50.0))
+            self.DefineNodeCoords('e',  (68.0, 50.0))
+            self.DefineNodeCoords('p4', (74.0, 50.0))
+            self.DefineNodeCoords('f',  (80.0, 50.0))
+        elif self.Name == 'second':
+            self.DefineNodeCoords('a',  (20.0, 50.0))
+            self.DefineNodeCoords('p2', (26.0, 45.0))
+            self.DefineNodeCoords('b',  (32.0, 50.0))
+            self.DefineNodeCoords('p3', (38.0, 50.0))
+            self.DefineNodeCoords('c',  (44.0, 50.0))
+            self.DefineNodeCoords('p0', (50.0, 50.0))
+            self.DefineNodeCoords('d',  (56.0, 50.0))
+            self.DefineNodeCoords('p1', (62.0, 50.0))
+            self.DefineNodeCoords('e',  (68.0, 50.0))
+            self.DefineNodeCoords('p4', (74.0, 55.0))
+            self.DefineNodeCoords('f',  (80.0, 50.0))
+        else:
+            raise Exception('unexpected neet name')
 
 #---------------------------------------------------------------------------------------------------
 
@@ -328,6 +379,87 @@ class Net:
 
 #---------------------------------------------------------------------------------------------------
 
+    def SetEdgeCoordsTypeHorizontal(e):
+        """
+        Define edge coordinates type 'horizontal'.
+
+        Arguments:
+            e -- Edge.
+        """
+
+        ap, bp = e.APoint, e.BPoint
+        cxf = 0.25 * (3.0 * ap[0] + bp[0])
+        cxt = 0.25 * (ap[0] + 3.0 * bp[0])
+        cx = random.uniform(cxf, cxt)
+        ap1 = (cx, ap[1])
+        bp1 = (cx, bp[1])
+        e.Points = ap + ap1 + bp1 + bp
+
+#---------------------------------------------------------------------------------------------------
+
+    def SetEdgeCoordsTypeVertical(e):
+        """
+        Define edge coordinates type 'vertical'.
+
+        Arguments:
+            e -- Edge.
+        """
+
+        a, b, = e.Pred, e.Succ
+        ap, bp = e.APoint, e.BPoint
+        ap1 = (ap[0] + 0.25 * a.Width, ap[1])
+        bp1 = (bp[0] - 0.25 * b.Width, bp[1])
+        cyf = 0.25 * (3.0 * ap1[1] + bp1[1])
+        cyt = 0.25 * (ap1[1] + 3.0 * bp1[1])
+        cy = random.uniform(cyf, cyt)
+        ap2 = (ap1[0], cy)
+        bp2 = (bp1[0], cy)
+        e.Points = ap + ap1 + ap2 + bp2 + bp1 + bp
+
+#---------------------------------------------------------------------------------------------------
+
+    def SetEdgeCoordsTypeOverHead(e):
+        """
+        Define edge coordinates type 'over head'.
+
+        Arguments:
+            e -- Edge.
+        """
+
+        a, b, = e.Pred, e.Succ
+        ap, bp = e.APoint, e.BPoint
+        ap1 = (ap[0] + 0.5 * a.Width, ap[1])
+        bp1 = (bp[0] - 0.5 * b.Width, bp[1])
+        yf = max(ap1[1] + a.Height, bp1[1] + b.Height)
+        yt = yf + a.Height
+        y = random.uniform(yf, yt)
+        ap2 = (ap1[0], y)
+        bp2 = (bp1[0], y)
+        e.Points = ap + ap1 + ap2 + bp2 + bp1 + bp
+
+#---------------------------------------------------------------------------------------------------
+
+    def SetEdgeCoordsTypeOverBottom(e):
+        """
+        Define edge coordinates type 'over bottom'.
+
+        Arguments:
+            e -- Edge.
+        """
+
+        a, b, = e.Pred, e.Succ
+        ap, bp = e.APoint, e.BPoint
+        ap1 = (ap[0] + 0.5 * a.Width, ap[1])
+        bp1 = (bp[0] - 0.5 * b.Width, bp[1])
+        yt = max(ap1[1] - a.Height, bp1[1] - b.Height)
+        yf = yt - a.Height
+        y = random.uniform(yf, yt)
+        ap2 = (ap1[0], y)
+        bp2 = (bp1[0], y)
+        e.Points = ap + ap1 + ap2 + bp2 + bp1 + bp
+
+#---------------------------------------------------------------------------------------------------
+
     def DefineEdgesCoords(self):
         """
         Define edges coordintes.
@@ -345,33 +477,30 @@ class Net:
                                                 b.Center[1] + 0.5 * b.Height,
                                                 len(b.InEdges),
                                                 b.InEdges.index(e)))
+            e.APoint = ap
+            e.BPoint = bp
 
             if ap[0] < bp[0]:
-                cxf = 0.25 * (3.0 * ap[0] + bp[0])
-                cxt = 0.25 * (ap[0] + 3.0 * bp[0])
-                cx = random.uniform(cxf, cxt)
-                ap1 = (cx, ap[1])
-                bp1 = (cx, bp[1])
-                e.Points = ap + ap1 + bp1 + bp
+                Net.SetEdgeCoordsTypeHorizontal(e)
             elif abs(ap[1] - bp[1]) > a.Height:
-                ap1 = (ap[0] + 0.25 * a.Width, ap[1])
-                bp1 = (bp[0] - 0.25 * b.Width, bp[1])
-                cyf = 0.25 * (3.0 * ap1[1] + bp1[1])
-                cyt = 0.25 * (ap1[1] + 3.0 * bp1[1])
-                cy = random.uniform(cyf, cyt)
-                ap2 = (ap1[0], cy)
-                bp2 = (bp1[0], cy)
-                e.Points = ap + ap1 + ap2 + bp2 + bp1 + bp
+                Net.SetEdgeCoordsTypeVertical(e)
             else:
-                # Over head.
-                ap1 = (ap[0] + 0.5 * a.Width, ap[1])
-                bp1 = (bp[0] - 0.5 * b.Width, bp[1])
-                yf = max(ap1[1] + a.Height, bp1[1] + b.Height)
-                yt = yf + a.Height
-                y = random.uniform(yf, yt)
-                ap2 = (ap1[0], y)
-                bp2 = (bp1[0], y)
-                e.Points = ap + ap1 + ap2 + bp2 + bp1 + bp
+                Net.SetEdgeCoordsTypeOverHead(e)
+
+#---------------------------------------------------------------------------------------------------
+
+    def TuneCoords(self):
+        """
+        Tune coords.
+        """
+
+        if self.Name == 'origin':
+            pass
+        elif self.Name == 'second':
+            Net.SetEdgeCoordsTypeOverHead(self.FindEdge('a', 'p4'))
+            Net.SetEdgeCoordsTypeOverBottom(self.FindEdge('p2', 'f'))
+        else:
+            raise Exception('unexpected neet name')
 
 #---------------------------------------------------------------------------------------------------
 # Test.

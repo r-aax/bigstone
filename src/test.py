@@ -6,6 +6,7 @@ Created on Fri Apr  3 11:12:07 2020
 """
 
 # Own modules.
+import alpha
 import petri_net
 import png_draw
 
@@ -15,26 +16,35 @@ import png_draw
 
 if __name__ == '__main__':
 
-    # Construct net.
-    net = petri_net.Net()
+    print('---------- test.py ---------- : ')
 
-    # Fill net configuration.
-    activities_list = ['a', 'b', 'c', 'd', 'e', 'f']
-    input_activities_list = ['a']
-    output_activities_list = ['f']
-    y_list = [({'c'}, {'d'}), ({'a'}, {'e'}), ({'b'}, {'c', 'f'}),
-              ({'e'}, {'f'}), ({'a', 'd'}, {'b'})]
+    case = 1
 
-    # Construct net.
-    net.ConstructFromAlphaAlgorithm((activities_list, input_activities_list,
-                                     output_activities_list, y_list))
-    net.DefineNodesCoords()
-    net.DefineEdgesCoords()
-    net.Print()
+    if case == 0:
+        alpha_results = alpha.apply_alpha_algorithm([(['a', 'b', 'c', 'd', 'e', 'f'], 1)])
+        net = petri_net.Net('origin')
+    elif case == 1:
+        alpha_results = alpha.apply_alpha_algorithm([(['a', 'b', 'c', 'd', 'e', 'f'], 1),
+                                                     (['a', 'f'], 1)])
+        net = petri_net.Net('second')
+    else:
+        raise Exception('unknown case')
 
-    # Construct drawer.
-    drawer = png_draw.Drawer()
-    drawer.DrawPetriNet(net)
-    drawer.FSS()
+    print(alpha_results)
+    print('y_list len = %d' % len(alpha_results[3]))
+
+    if True:
+
+        # Construct and print info.
+        net.ConstructFromAlphaAlgorithm(alpha_results)
+        net.DefineNodesCoords()
+        net.DefineEdgesCoords()
+        net.TuneCoords()
+        net.Print()
+
+        # Construct drawer.
+        drawer = png_draw.Drawer()
+        drawer.DrawPetriNet(net)
+        drawer.FSS()
 
 #---------------------------------------------------------------------------------------------------

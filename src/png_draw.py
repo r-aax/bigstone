@@ -34,7 +34,7 @@ class Drawer:
 
     def __init__(self,
                  draw_area = (0.0, 0.0, 100.0, 100.0),
-                 pic_size = (640, 480),
+                 pic_size = (1600, 1200),
                  margins = (10, 10),
                  invert = (False, True),
                  backcolor = (255, 255, 255)):
@@ -379,18 +379,18 @@ class Drawer:
             self.Lines(ps, pen = pen)
 
             if len(ps) > 1:
-                self.Point((ps[0], ps[1]), 2, pen = pen, brush = brush)
-                self.Point((ps[-2], ps[-1]), 2, pen = pen, brush = WhiteBrush)
+                self.Point((ps[0], ps[1]), 4, pen = pen, brush = brush)
+                self.Point((ps[-2], ps[-1]), 4, pen = pen, brush = WhiteBrush)
 
         self.Canvas.flush()
 
         # Labels.
         dr = ImageDraw.Draw(self.Img)
-        font = ImageFont.truetype('C:\Windows\Fonts\lucon.ttf', 14)
+        font = ImageFont.truetype('C:\Windows\Fonts\lucon.ttf', 24)
         for n in net.Nodes:
             (x, y) = self.To(n.Center)
             l = len(n.Label)
-            dr.text((x - l * 4.0, y - 6.0), n.Label, font = font, fill = n.FontColor)
+            dr.text((x - l * 7.0, y - 10.0), n.Label, font = font, fill = n.FontColor)
 
 #---------------------------------------------------------------------------------------------------
 # Other functions.
